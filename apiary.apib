@@ -1,0 +1,112 @@
+FORMAT: 1A
+HOST: http://polls.apiblueprint.org/
+
+# Embed
+
+# Tokens [/tokens]
+
+## Create a new Token [POST]
+
+"UserCredentials" is a UTF-8 Base64-encoded value of the string username:password
+
++ Request
+
+    + Headers
+    
+            Authorization: Basic UserCredentials
+
++ Response 201 (application/json)
+
+        {
+            "token": "TokenString"
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "error": "Invalid or missing credentials"
+        }
+
+# Me [/me]
+
+## Retrieve my information [GET]
+
+"TokenString" is a valid token obtained using POST /tokens
+Returns information on the user who generated the TokenString
+If an invalid or missing TokenString is passed in the API call fails.
+
+
++ userId
++ userName
++ teamId
++ teamName
+
++ Request
+
+    + Headers
+    
+            Authorization: TokenString
+
++ Response 200 (application/json)
+
+        {
+            "userId": "Some User ID,
+            "userName": "User Name",
+            "teamId": "Some Team ID",
+            "teamName": "Team Name"
+        }
+
++ Response 401 (application/json)
+
+        {
+            "error": "Invalid or missing token"
+        }
+
+
+# APIs [/teams/{teamId}/apis]
+
+Retrieves a collection of all the public APIs for the specified team. No Authorization header is required.
+When an Authorization header is passed in, the collection will include information on private APIs.
+When no APIs exist an empty collection is returned.
+The API call fails if an invalid Authorization header is used or if an invalid teamId is used.
+
++ apiId
++ apiName
++ private
++ subdomain
+
++ Parameters
+    + teamId: 1 (required, string) - ID of team whose APIs need to be retrieved
+
+## Retrieve my APIs [GET]
++ Request
+
+    + Headers
+    
+            Authorization: TokenString
+            
++ Response 200 (application/json)
+
+        {
+            "items": [
+                {
+                    "apiId": "Some API ID,
+                    "apiName": "API Name",
+                    "apiDescription": "API Description",
+                    "private": true,
+                    "subdomain": "ASubdomain"
+                }
+            ]
+        }
+        
++ Response 401 (application/json)
+
+        {
+            "error": "Invalid token"
+        }
+        
++ Response 404 (application/json)
+
+        {
+            "error": "Team not found"
+        }
